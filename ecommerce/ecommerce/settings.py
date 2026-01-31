@@ -230,17 +230,26 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # Deployment check - for Render/Railway
-if "RENDER" in os.environ or "RAILWAY_STATIC_URL" in os.environ or os.environ.get("RENDER_EXTERNAL_HOSTNAME"):
+# Render sets RENDER=true or RENDER_EXTERNAL_HOSTNAME
+is_render = (
+    os.environ.get("RENDER") == "true" or 
+    os.environ.get("RENDER") == "True" or
+    "RENDER_EXTERNAL_HOSTNAME" in os.environ or
+    "RAILWAY_STATIC_URL" in os.environ
+)
+
+if is_render:
     # Ensure these settings for production
     DEBUG = False
-    ALLOWED_HOSTS = ["*"]  # Or your specific domain
-    # Add your production domain when you have it
-    # ALLOWED_HOSTS = ['your-app.onrender.com', 'www.yourdomain.com']
+    ALLOWED_HOSTS = ["*"]  # Allow all hosts on Render
     
     # Add Render hostname to CSRF trusted origins if available
     render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
     if render_hostname:
         CSRF_TRUSTED_ORIGINS.append(f"https://{render_hostname}")
+        # Also add without subdomain pattern
+        if not any(hostname in origin for origin in CSRF_TRUSTED_ORIGINS):
+            CSRF_TRUSTED_ORIGINS.append(f"https://*.onrender.com")
 
 # For PythonAnywhere
 if "PYTHONANYWHERE_DOMAIN" in os.environ:

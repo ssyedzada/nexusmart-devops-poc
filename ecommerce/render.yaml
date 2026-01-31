@@ -2,8 +2,9 @@ services:
   - type: web
     name: ecommerce-app
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
-    startCommand: gunicorn ecommerce.wsgi:application --bind 0.0.0.0:$PORT
+    rootDir: ecommerce
+    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput
+    startCommand: gunicorn ecommerce.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.3
@@ -17,6 +18,8 @@ services:
         fromDatabase:
           name: ecommerce-db
           property: connectionString
+      - key: RENDER
+        value: true
     healthCheckPath: /
     
 databases:
