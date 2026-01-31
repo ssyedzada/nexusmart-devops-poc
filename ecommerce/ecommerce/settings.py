@@ -247,9 +247,10 @@ if is_render:
     render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
     if render_hostname:
         CSRF_TRUSTED_ORIGINS.append(f"https://{render_hostname}")
-        # Also add without subdomain pattern
-        if not any(hostname in origin for origin in CSRF_TRUSTED_ORIGINS):
-            CSRF_TRUSTED_ORIGINS.append(f"https://*.onrender.com")
+    
+    # Also add Render domain pattern if not already present
+    if not any("onrender.com" in origin for origin in CSRF_TRUSTED_ORIGINS):
+        CSRF_TRUSTED_ORIGINS.append("https://*.onrender.com")
 
 # For PythonAnywhere
 if "PYTHONANYWHERE_DOMAIN" in os.environ:
