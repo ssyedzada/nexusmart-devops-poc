@@ -39,17 +39,19 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('ecommerce/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
+        working-directory: ./ecommerce
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-django coverage
 
       - name: Run migrations
+        working-directory: ./ecommerce
         env:
           DATABASE_URL: postgresql://nexusmart:nexusmart123@localhost:5432/nexusmart_test
           SECRET_KEY: test-secret-key-for-ci
@@ -59,22 +61,24 @@ jobs:
           python manage.py migrate --noinput
 
       - name: Run tests
+        working-directory: ./ecommerce
         env:
           DATABASE_URL: postgresql://nexusmart:nexusmart123@localhost:5432/nexusmart_test
           SECRET_KEY: test-secret-key-for-ci
           DEBUG: True
         run: |
-          python manage.py test --noinput
           coverage run --source='.' manage.py test
           coverage report
           coverage xml || true
 
       - name: Security scan with Bandit
+        working-directory: ./ecommerce
         run: |
           pip install bandit
           bandit -r . -f json -o bandit-report.json || true
 
       - name: Check code formatting
+        working-directory: ./ecommerce
         run: |
           pip install black flake8
           black --check . || true
@@ -99,10 +103,12 @@ jobs:
           pip install flake8 black pylint
 
       - name: Run flake8
+        working-directory: ./ecommerce
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true
 
       - name: Check black formatting
+        working-directory: ./ecommerce
         run: |
           black --check . || true
 
@@ -121,7 +127,8 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./ecommerce
+          file: ./ecommerce/Dockerfile
           push: false
           tags: nexusmart:latest
           cache-from: type=gha
