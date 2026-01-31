@@ -1,0 +1,218 @@
+{% extends 'shop/base.html' %} {% block content %}
+<div class="container py-5">
+  <!-- Dashboard Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="display-6 fw-bold">
+            <i class="fas fa-tachometer-alt text-primary me-2"></i>Admin
+            Dashboard
+          </h1>
+          <p class="text-muted">Welcome back, {{ user.username }}!</p>
+        </div>
+        <div>
+          <a href="/admin/" class="btn btn-outline-primary me-2">
+            <i class="fas fa-cog me-2"></i>Django Admin
+          </a>
+          <a href="/" class="btn btn-primary">
+            <i class="fas fa-home me-2"></i>View Site
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-2">Total Products</h6>
+              <h2 class="fw-bold text-primary mb-0">{{ total_products }}</h2>
+            </div>
+            <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+              <i class="fas fa-box fa-2x text-primary"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-2">Orders Today</h6>
+              <h2 class="fw-bold text-success mb-0">0</h2>
+            </div>
+            <div class="bg-success bg-opacity-10 p-3 rounded-circle">
+              <i class="fas fa-shopping-cart fa-2x text-success"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-2">Revenue</h6>
+              <h2 class="fw-bold text-warning mb-0">£0.00</h2>
+            </div>
+            <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
+              <i class="fas fa-pound-sign fa-2x text-warning"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-2">Users</h6>
+              <h2 class="fw-bold text-info mb-0">1</h2>
+            </div>
+            <div class="bg-info bg-opacity-10 p-3 rounded-circle">
+              <i class="fas fa-users fa-2x text-info"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Products -->
+  <div class="row">
+    <div class="col-lg-8 mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0">
+            <i class="fas fa-box-open me-2 text-primary"></i>Recent Products
+          </h5>
+        </div>
+        <div class="card-body">
+          {% if recent_products %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for product in recent_products %}
+                <tr>
+                  <td>
+                    <strong>{{ product.name }}</strong>
+                  </td>
+                  <td>£{{ product.price }}</td>
+                  <td>
+                    <a
+                      href="/product/{{ product.id }}/"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="fas fa-eye me-1"></i>View
+                    </a>
+                    <a
+                      href="/admin/shop/product/{{ product.id }}/change/"
+                      class="btn btn-sm btn-outline-secondary"
+                    >
+                      <i class="fas fa-edit me-1"></i>Edit
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No products found.</p>
+            <a href="/admin/shop/product/add/" class="btn btn-primary">
+              <i class="fas fa-plus me-2"></i>Add Product
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0">
+            <i class="fas fa-bolt me-2 text-primary"></i>Quick Actions
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <a
+              href="/admin/shop/product/add/"
+              class="btn btn-primary"
+            >
+              <i class="fas fa-plus me-2"></i>Add New Product
+            </a>
+            <a href="/admin/shop/product/" class="btn btn-outline-primary">
+              <i class="fas fa-list me-2"></i>Manage Products
+            </a>
+            <a href="/admin/" class="btn btn-outline-secondary">
+              <i class="fas fa-cog me-2"></i>Django Admin Panel
+            </a>
+            <a href="/products/" class="btn btn-outline-info">
+              <i class="fas fa-store me-2"></i>View Product Catalog
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Info -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0">
+            <i class="fas fa-info-circle me-2 text-primary"></i>System Info
+          </h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+              <i class="fas fa-server me-2 text-muted"></i>
+              <strong>Status:</strong>
+              <span class="badge bg-success">Online</span>
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-code me-2 text-muted"></i>
+              <strong>Framework:</strong> Django
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-database me-2 text-muted"></i>
+              <strong>Database:</strong> SQLite/PostgreSQL
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-docker me-2 text-muted"></i>
+              <strong>Containerized:</strong> Yes
+            </li>
+            <li>
+              <i class="fas fa-rocket me-2 text-muted"></i>
+              <strong>CI/CD:</strong> GitHub Actions
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
